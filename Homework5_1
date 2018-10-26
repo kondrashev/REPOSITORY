@@ -1,0 +1,51 @@
+public class Main {
+
+	public static void main(String[] args) {
+		Thread thr = Thread.currentThread();
+		System.out.println(thr.getName() + " STOP");
+		for (int i = 1; i <102; i++) {
+			FactorialStream fs = new FactorialStream(i);
+			Thread threadNew = new Thread(fs);
+			threadNew.start();
+		}
+	}
+
+}
+
+public class FactorialStream implements Runnable {
+	private int n;
+	private Thread thr;
+	private String factNew;
+
+	public FactorialStream(int n) {
+		super();
+		this.n = n;
+	}
+
+	public FactorialStream() {
+		super();
+	}
+
+	public BigInteger factorial(int n) {
+		BigInteger fact = new BigInteger("1");
+		for (int i = 1; i <= n; i++) {
+			fact = fact.multiply(new BigInteger("" + i));
+		}
+		return fact;
+	}
+
+	@Override
+	public void run() {
+		Thread thr = Thread.currentThread();
+		for (int i = 1; i < n; i++) {
+			if (thr.isInterrupted()) {
+				System.out.println(thr.getName() + " Interrupted");
+				return;
+			}
+			factNew = thr.getName() + " => " + i + " != " + factorial(i);
+		}
+		if (factNew != null) {
+			System.out.println(factNew);
+		}
+	}
+}
