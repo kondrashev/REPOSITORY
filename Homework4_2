@@ -1,0 +1,133 @@
+public class Main {
+
+	public static void main(String[] args) {
+		File fileOne = new File("One.txt");
+		try {
+			fileOne.createNewFile();
+		} catch (IOException e) {
+		}
+		File fileTwo = new File("Two.txt");
+		try {
+			fileTwo.createNewFile();
+		} catch (IOException e) {
+		}
+		File fileThree = new File("Three.txt");
+		try {
+			fileThree.createNewFile();
+		} catch (IOException e) {
+		}
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Write now everything!!!");
+		String str = sc.nextLine();
+		FileOutputStream f = null;
+		byte[] b = str.getBytes();
+		try {
+			f = new FileOutputStream("One.txt");
+			f.write(b);
+		} catch (IOException e) {
+			System.out.println("I/O Error!!!");
+		} finally {
+			try {
+				f.close();
+			} catch (IOException e) {
+				System.out.println("Error close file!!!");
+			}
+		}
+		System.out.println("Write now everything!!!");
+		str = sc.nextLine();
+		f = null;
+		b = str.getBytes();
+		try {
+			f = new FileOutputStream("Two.txt");
+			f.write(b);
+		} catch (IOException e) {
+			System.out.println("I/O Error!!!");
+		} finally {
+			try {
+				f.close();
+			} catch (IOException e) {
+				System.out.println("Error close file!!!");
+			}
+		}
+		WorkWithFiles wwF = new WorkWithFiles(fileThree);
+		wwF.readFilesTxt(fileOne);
+		wwF.readFilesTxt(fileTwo);
+		try (FileInputStream fNew = new FileInputStream(wwF.filesTxt())) {
+			b = new byte[fNew.available()];
+			fNew.read(b);
+			for (byte a : b) {
+				System.out.print((char) a);
+			}
+		} catch (IOException e) {
+			System.out.println("File read Error!!!");
+		}
+	}
+
+}
+
+public class WorkWithFiles {
+	private File fileThree;
+	private String keysOne = "";
+	private String keysTwo = "";
+	private String keysThree = "";
+
+	public WorkWithFiles(File fileThree) {
+		super();
+		this.fileThree = fileThree;
+	}
+
+	public WorkWithFiles() {
+		super();
+	}
+
+	public void readFilesTxt(File file) {
+		try (FileInputStream f = new FileInputStream(file)) {
+			byte[] b = new byte[f.available()];
+			f.read(b);
+			if (keysOne == "") {
+				for (byte a : b) {
+					keysOne += String.valueOf((char) a);
+				}
+			} else {
+				for (byte a : b) {
+					keysTwo += String.valueOf((char) a);
+				}
+			}
+			System.out.println(keysOne);
+			System.out.println(keysTwo);
+		} catch (IOException e) {
+			System.out.println("File read Error!!!");
+		}
+	}
+
+	public File filesTxt() {
+		String[] keysOneNew;
+		keysOneNew = keysOne.split("[\\s+-,.!?:]+");
+		String[] keysTwoNew;
+		keysTwoNew = keysTwo.split("[\\s+-,.!?:]+");
+		boolean find = false;
+		for (String a : keysOneNew) {
+			for (int i = 0; i < keysTwoNew.length; i++) {
+				find = keysTwoNew[i].equalsIgnoreCase(a);
+				if (find == true) {
+					keysThree += " " + a;
+				}
+			}
+		}
+		FileOutputStream f = null;
+		byte[] b = keysThree.getBytes();
+		try {
+			f = new FileOutputStream("Three.txt");
+			f.write(b);
+		} catch (IOException e) {
+			System.out.println("I/O Error!!!");
+		} finally {
+			try {
+				f.close();
+			} catch (IOException e) {
+				System.out.println("Error close file!!!");
+			}
+		}
+		return fileThree;
+	}
+}
